@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Ficha da carteira do Sentinela.Invest: preencha suas acoes e envie pronta pelo Telegram.">
+<meta name="robots" content="noindex">
+<style>
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>Ficha Sentinela.Invest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500&display=swap">
+<style>
+  :root {
+    --papel: #f1f4f3;
+    --superficie: #ffffff;
+    --superficie-2: #e8edeb;
+    --tinta: #111a18;
+    --tinta-suave: #4a5a56;
+    --linha: #d3dbd8;
+    --verde: #0f6b52;
+    --verde-claro: #e3efeb;
+    --ambar: #8c5a0e;
+    --sombra: 0 1px 2px rgba(17, 26, 24, .06), 0 8px 24px -16px rgba(17, 26, 24, .25);
+    --serif: "Newsreader", Georgia, "Times New Roman", serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --papel: #0d1413;
+      --superficie: #151e1c;
+      --superficie-2: #1d2926;
+      --tinta: #e7edea;
+      --tinta-suave: #9aaba6;
+      --linha: #2a3835;
+      --verde: #58bd99;
+      --verde-claro: #18302a;
+      --ambar: #d8a75a;
+      --sombra: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -16px rgba(0, 0, 0, .8);
+    }
+  }
+  :root[data-theme="dark"] {
+    --papel: #0d1413;
+    --superficie: #151e1c;
+    --superficie-2: #1d2926;
+    --tinta: #e7edea;
+    --tinta-suave: #9aaba6;
+    --linha: #2a3835;
+    --verde: #58bd99;
+    --verde-claro: #18302a;
+    --ambar: #d8a75a;
+    --sombra: 0 1px 2px rgba(0, 0, 0, .4), 0 8px 24px -16px rgba(0, 0, 0, .8);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--papel);
+    color: var(--tinta);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.55;
+    margin: 0;
+    padding-inline: 20px;
+    padding-block: 0 40px;
+  }
+  .folha { max-width: 580px; margin-inline: auto; }
+
+  /* ---------------------------------------------------------- cabecalho */
+  header { padding-block: 36px 24px; }
+  .marca {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--verde);
+    margin: 0 0 14px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 400;
+    font-size: clamp(30px, 8vw, 40px);
+    line-height: 1.12;
+    letter-spacing: -.01em;
+    text-wrap: balance;
+    margin: 0 0 12px;
+  }
+  .abertura { color: var(--tinta-suave); margin: 0; max-width: 46ch; }
+
+  /* ------------------------------------------------------------ blocos */
+  section { margin-top: 28px; }
+  h2 {
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--tinta-suave);
+    margin: 0 0 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--linha);
+  }
+
+  .aviso-privacidade {
+    background: var(--verde-claro);
+    border-left: 3px solid var(--verde);
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .aviso-privacidade p { margin: 0; font-size: 15px; }
+  .aviso-privacidade strong { font-weight: 600; }
+
+  label { display: block; font-size: 13px; color: var(--tinta-suave); margin-bottom: 5px; }
+  input[type="text"], textarea {
+    width: 100%;
+    background: var(--superficie);
+    color: var(--tinta);
+    border: 1px solid var(--linha);
+    border-radius: 6px;
+    padding: 11px 12px;
+    font-family: var(--sans);
+    font-size: 16px;
+  }
+  input.numero, input.codigo { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  input.codigo { text-transform: uppercase; }
+  input:focus-visible, textarea:focus-visible, button:focus-visible {
+    outline: 2px solid var(--verde);
+    outline-offset: 2px;
+  }
+  input::placeholder, textarea::placeholder { color: var(--tinta-suave); opacity: .55; }
+
+  /* ------------------------------------------------------------ ativos */
+  #ativos { display: flex; flex-direction: column; gap: 14px; }
+  .ativo {
+    background: var(--superficie);
+    border: 1px solid var(--linha);
+    border-radius: 8px;
+    box-shadow: var(--sombra);
+    padding: 14px;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+  @media (max-width: 480px) {
+    .ativo { grid-template-columns: 1fr 1fr; }
+    .ativo .campo-codigo { grid-column: 1 / -1; }
+  }
+  .ativo .apagar {
+    background: none;
+    border: 1px solid var(--linha);
+    border-radius: 6px;
+    color: var(--tinta-suave);
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 10px 12px;
+  }
+  .ativo .apagar:hover { border-color: var(--ambar); color: var(--ambar); }
+  .dica { font-size: 13px; color: var(--tinta-suave); margin: 10px 0 0; }
+  .dica b { color: var(--ambar); font-weight: 600; }
+
+  /* ------------------------------------------------------------ avisos */
+  .escolhas { display: flex; flex-direction: column; gap: 2px; }
+  .escolha {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 12px;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+  .escolha:hover { background: var(--superficie-2); }
+  .escolha input { margin: 3px 0 0; width: 18px; height: 18px; accent-color: var(--verde); flex: none; }
+  .escolha span { font-size: 15px; }
+  .escolha small { display: block; color: var(--tinta-suave); font-size: 13px; }
+
+  /* ----------------------------------------------------------- resultado */
+  .saida {
+    background: var(--superficie-2);
+    border: 1px dashed var(--linha);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.7;
+    white-space: pre-wrap;
+    overflow-x: auto;
+    color: var(--tinta);
+  }
+  .acoes { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+  button.principal, a.principal {
+    background: var(--verde);
+    color: var(--papel);
+    border: none;
+    border-radius: 6px;
+    padding: 13px 20px;
+    font-family: var(--sans);
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  button.secundaria {
+    background: var(--superficie);
+    color: var(--tinta);
+    border: 1px solid var(--linha);
+    border-radius: 6px;
+    padding: 13px 18px;
+    font-family: var(--sans);
+    font-size: 15px;
+    cursor: pointer;
+  }
+  button.principal:hover, a.principal:hover { filter: brightness(1.08); }
+  button.secundaria:hover { border-color: var(--verde); }
+  #recado { font-size: 14px; color: var(--verde); margin: 12px 0 0; min-height: 1.4em; font-weight: 500; }
+
+  /* ------------------------------------------------------------ passos */
+  ol.passos { margin: 0; padding-left: 0; list-style: none; counter-reset: passo; }
+  ol.passos li {
+    counter-increment: passo;
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 12px;
+    padding-block: 10px;
+    border-bottom: 1px solid var(--linha);
+  }
+  ol.passos li:last-child { border-bottom: none; }
+  ol.passos li::before {
+    content: counter(passo);
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--verde);
+    border: 1px solid var(--linha);
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    display: grid;
+    place-items: center;
+  }
+  code.bot { font-family: var(--mono); background: var(--superficie-2); padding: 1px 5px; border-radius: 4px; }
+
+  footer {
+    margin-top: 36px;
+    padding-top: 18px;
+    border-top: 1px solid var(--linha);
+    font-size: 13px;
+    color: var(--tinta-suave);
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
+</style>
+
+</head>
+<body>
+<div class="folha">
+  <header>
+    <p class="marca">Sentinela.Invest</p>
+    <h1>Ficha da sua carteira</h1>
+    <p class="abertura">Preencha com o extrato da corretora aberto do lado. Leva uns três minutos, e é a única vez que você precisa fazer isso.</p>
+  </header>
+
+  <section>
+    <div class="aviso-privacidade">
+      <p><strong>Só pedimos três coisas por ação:</strong> o código, quantas você tem e o preço médio.</p>
+      <p>Nada de salário, patrimônio, senha da corretora ou número de conta. Se você só quer acompanhar parte da carteira, liste só essa parte.</p>
+      <p><strong>O preço médio é o que faz o serviço funcionar:</strong> sem ele dá pra saber que a ação caiu, mas não se <em>você</em> está ganhando ou perdendo com ela. Costuma aparecer no extrato como “preço médio” ou “custo médio”.</p>
+      <p>A ficha fica guardada num repositório privado, à vista só de quem opera o serviço. Você vê o texto exato antes de enviar, ali embaixo.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Quem é você</h2>
+    <label for="nome">Seu nome</label>
+    <input type="text" id="nome" placeholder="Como você quer ser chamada nas mensagens">
+  </section>
+
+  <section>
+    <h2>Suas ações</h2>
+    <div id="ativos"></div>
+    <div class="acoes">
+      <button type="button" class="secundaria" id="adicionar">+ Adicionar outra ação</button>
+    </div>
+    <p class="dica">O código é aquele de quatro letras e um número, como <b>PETR4</b> ou <b>WEGE3</b>. Fundos imobiliários terminam em 11.</p>
+  </section>
+
+  <section>
+    <h2>Quando você quer ser avisada</h2>
+    <div class="escolhas">
+      <label class="escolha" for="av-queda">
+        <input type="checkbox" id="av-queda" class="aviso" data-nome="queda" checked>
+        <span>Quando uma ação sua cair forte<small>Queda fora do normal em um único dia.</small></span>
+      </label>
+      <label class="escolha" for="av-alta">
+        <input type="checkbox" id="av-alta" class="aviso" data-nome="alta" checked>
+        <span>Quando uma ação sua subir forte<small>Serve pra saber que algo aconteceu, não pra correr e vender.</small></span>
+      </label>
+      <label class="escolha" for="av-noticia">
+        <input type="checkbox" id="av-noticia" class="aviso" data-nome="noticia" checked>
+        <span>Quando a empresa comunicar algo importante<small>Os documentos que a empresa é obrigada a publicar, em português comum.</small></span>
+      </label>
+      <label class="escolha" for="av-dividendo">
+        <input type="checkbox" id="av-dividendo" class="aviso" data-nome="dividendo" checked>
+        <span>Quando cair dividendo<small>Quanto foi, e em que dia entra na conta.</small></span>
+      </label>
+    </div>
+    <label for="obs" style="margin-top:16px">Quer dizer mais alguma coisa? (opcional)</label>
+    <textarea id="obs" rows="2" placeholder="Ex.: prefiro receber só de manhã"></textarea>
+  </section>
+
+  <section>
+    <h2>O que vai ser enviado</h2>
+    <div class="saida" id="saida" aria-live="polite"></div>
+    <div class="acoes">
+      <button type="button" class="principal" id="copiar">Copiar a ficha</button>
+      <a class="principal" id="abrir" href="https://t.me/SentinelainestBot" target="_blank" rel="noopener" style="background:var(--superficie);color:var(--tinta);border:1px solid var(--linha)">Abrir o Telegram</a>
+    </div>
+    <p id="recado"></p>
+  </section>
+
+  <section>
+    <h2>Como enviar</h2>
+    <ol class="passos">
+      <li><span>Toque em <strong>Copiar a ficha</strong>. O texto acima vai pra área de transferência do celular.</span></li>
+      <li><span>Toque em <strong>Abrir o Telegram</strong> e comece a conversa com <code class="bot">@SentinelainestBot</code>.</span></li>
+      <li><span>Segure o dedo na caixa de mensagem, escolha <strong>Colar</strong> e envie.</span></li>
+      <li><span>Pronto. Você recebe a confirmação por ali e os avisos começam em seguida.</span></li>
+    </ol>
+  </section>
+
+  <footer>
+    O Sentinela.Invest acompanha a sua carteira e avisa quando algo muda. Não recomenda compra ou venda, não administra dinheiro e não tem acesso à sua corretora.
+  </footer>
+</div>
+
+<script>
+  const RASCUNHO = "ficha-sentinela-rascunho";
+  const ativos = document.getElementById("ativos");
+  const saida = document.getElementById("saida");
+  const recado = document.getElementById("recado");
+
+  function linha(dados = {}) {
+    const div = document.createElement("div");
+    div.className = "ativo";
+    div.innerHTML = `
+      <div class="campo-codigo">
+        <label>Ação</label>
+        <input type="text" class="codigo" placeholder="PETR4" autocapitalize="characters" spellcheck="false">
+      </div>
+      <div>
+        <label>Quantas você tem</label>
+        <input type="text" class="numero quantidade" inputmode="decimal" placeholder="100">
+      </div>
+      <div>
+        <label>Preço médio</label>
+        <input type="text" class="numero preco" inputmode="decimal" placeholder="30,00">
+      </div>
+      <button type="button" class="apagar" aria-label="Remover esta ação">&times;</button>`;
+    div.querySelector(".codigo").value = dados.codigo || "";
+    div.querySelector(".quantidade").value = dados.quantidade || "";
+    div.querySelector(".preco").value = dados.preco || "";
+    div.querySelector(".apagar").addEventListener("click", () => {
+      div.remove();
+      if (!ativos.children.length) ativos.appendChild(linha());
+      atualizar();
+    });
+    div.querySelectorAll("input").forEach(i => i.addEventListener("input", atualizar));
+    return div;
+  }
+
+  function lidos() {
+    return [...ativos.querySelectorAll(".ativo")].map(d => ({
+      codigo: d.querySelector(".codigo").value.trim().toUpperCase(),
+      quantidade: d.querySelector(".quantidade").value.trim(),
+      preco: d.querySelector(".preco").value.trim(),
+    })).filter(a => a.codigo || a.quantidade || a.preco);
+  }
+
+  function texto() {
+    const nome = document.getElementById("nome").value.trim();
+    const obs = document.getElementById("obs").value.trim();
+    const avisos = [...document.querySelectorAll(".aviso")].filter(c => c.checked).map(c => c.dataset.nome);
+    const linhas = ["FICHA SENTINELA v1", "nome: " + (nome || "(não preenchido)"), "ativos:"];
+    const lista = lidos();
+    if (!lista.length) {
+      linhas.push("  (nenhuma ação preenchida ainda)");
+    } else {
+      lista.forEach(a => linhas.push(`  - ${a.codigo || "?"} | ${a.quantidade || "?"} | ${a.preco || "?"}`));
+    }
+    linhas.push("avisos: " + (avisos.length ? avisos.join(", ") : "nenhum"));
+    if (obs) linhas.push("obs: " + obs);
+    return linhas.join("\n");
+  }
+
+  function atualizar() {
+    saida.textContent = texto();
+    try {
+      localStorage.setItem(RASCUNHO, JSON.stringify({
+        nome: document.getElementById("nome").value,
+        obs: document.getElementById("obs").value,
+        ativos: lidos(),
+        avisos: [...document.querySelectorAll(".aviso")].map(c => c.checked),
+      }));
+    } catch (e) { /* navegador anônimo: segue sem rascunho */ }
+  }
+
+  function restaurar() {
+    let dados = null;
+    try { dados = JSON.parse(localStorage.getItem(RASCUNHO) || "null"); } catch (e) { /* idem */ }
+    if (dados) {
+      document.getElementById("nome").value = dados.nome || "";
+      document.getElementById("obs").value = dados.obs || "";
+      (dados.avisos || []).forEach((v, i) => {
+        const c = document.querySelectorAll(".aviso")[i];
+        if (c) c.checked = v;
+      });
+    }
+    const guardados = (dados && dados.ativos && dados.ativos.length) ? dados.ativos : [{}, {}];
+    guardados.forEach(a => ativos.appendChild(linha(a)));
+  }
+
+  document.getElementById("adicionar").addEventListener("click", () => {
+    const nova = linha();
+    ativos.appendChild(nova);
+    nova.querySelector(".codigo").focus();
+    atualizar();
+  });
+
+  document.getElementById("copiar").addEventListener("click", async () => {
+    const conteudo = texto();
+    try {
+      await navigator.clipboard.writeText(conteudo);
+      recado.textContent = "Copiado. Agora toque em Abrir o Telegram e cole na conversa.";
+    } catch (e) {
+      const area = document.createElement("textarea");
+      area.value = conteudo;
+      document.body.appendChild(area);
+      area.select();
+      try { document.execCommand("copy"); recado.textContent = "Copiado. Agora toque em Abrir o Telegram e cole na conversa."; }
+      catch (e2) { recado.textContent = "Seu navegador não deixou copiar sozinho: segure o dedo no texto acima e copie à mão."; }
+      area.remove();
+    }
+  });
+
+  document.querySelectorAll(".aviso, #nome, #obs").forEach(c => c.addEventListener("input", atualizar));
+  restaurar();
+  atualizar();
+</script>
+</body>
+</html>
