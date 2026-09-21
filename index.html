@@ -165,6 +165,21 @@
     padding: 10px 12px;
   }
   .ativo .apagar:hover { border-color: var(--ambar); color: var(--ambar); }
+  .motivo { grid-column: 1 / -1; border-top: 1px dashed var(--linha); padding-top: 12px; }
+  .motivo .opcoes { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .motivo .opcao {
+    background: var(--superficie);
+    color: var(--tinta);
+    border: 1px solid var(--linha);
+    border-radius: 999px;
+    padding: 7px 13px;
+    font-family: var(--sans);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .motivo .opcao:hover { border-color: var(--verde); }
+  .motivo .opcao[aria-pressed="true"] { background: var(--verde-claro); border-color: var(--verde); color: var(--verde); font-weight: 600; }
+  .motivo input[type="text"] { font-size: 15px; padding: 9px 12px; }
   .dica { font-size: 13px; color: var(--tinta-suave); margin: 10px 0 0; }
   .dica b { color: var(--ambar); font-weight: 600; }
 
@@ -270,7 +285,7 @@
 
   <section>
     <div class="aviso-privacidade">
-      <p><strong>Só pedimos três coisas por ação:</strong> o código, quantas você tem e o preço médio.</p>
+      <p><strong>Só pedimos três coisas por ação:</strong> o código, quantas você tem e o preço médio. Se quiser, conte também por que comprou: é opcional, e é o que deixa os avisos mais úteis pra você.</p>
       <p>Nada de salário, patrimônio, senha da corretora ou número de conta. Se você só quer acompanhar parte da carteira, liste só essa parte.</p>
       <p><strong>O preço médio é o que faz o serviço funcionar:</strong> sem ele dá pra saber que a ação caiu, mas não se <em>você</em> está ganhando ou perdendo com ela. Costuma aparecer no extrato como “preço médio” ou “custo médio”.</p>
       <p>A ficha fica guardada num repositório privado, à vista só de quem opera o serviço. Você vê o texto exato antes de enviar, ali embaixo.</p>
@@ -363,10 +378,30 @@
         <label>Preço médio</label>
         <input type="text" class="numero preco" inputmode="decimal" placeholder="30,00">
       </div>
-      <button type="button" class="apagar" aria-label="Remover esta ação">&times;</button>`;
+      <button type="button" class="apagar" aria-label="Remover esta ação">&times;</button>
+      <div class="motivo">
+        <label>Por que você comprou? <span style="opacity:.7">(opcional)</span></label>
+        <div class="opcoes" role="group" aria-label="Por que você comprou">
+          <button type="button" class="opcao" aria-pressed="false" data-valor="dividendos">Dividendos</button>
+          <button type="button" class="opcao" aria-pressed="false" data-valor="crescimento">Crescimento</button>
+          <button type="button" class="opcao" aria-pressed="false" data-valor="longo prazo">Longo prazo</button>
+          <button type="button" class="opcao" aria-pressed="false" data-valor="não sei dizer">Não sei dizer</button>
+        </div>
+        <input type="text" class="motivo-texto" placeholder="Ou escreva do seu jeito">
+      </div>`;
     div.querySelector(".codigo").value = dados.codigo || "";
     div.querySelector(".quantidade").value = dados.quantidade || "";
     div.querySelector(".preco").value = dados.preco || "";
+    div.querySelector(".motivo-texto").value = dados.motivoTexto || "";
+    div.querySelectorAll(".opcao").forEach(b => {
+      if (b.dataset.valor === dados.motivo) b.setAttribute("aria-pressed", "true");
+      b.addEventListener("click", () => {
+        const ligado = b.getAttribute("aria-pressed") === "true";
+        div.querySelectorAll(".opcao").forEach(o => o.setAttribute("aria-pressed", "false"));
+        if (!ligado) b.setAttribute("aria-pressed", "true");
+        atualizar();
+      });
+    });
     div.querySelector(".apagar").addEventListener("click", () => {
       div.remove();
       if (!ativos.children.length) ativos.appendChild(linha());
@@ -377,11 +412,17 @@
   }
 
   function lidos() {
-    return [...ativos.querySelectorAll(".ativo")].map(d => ({
-      codigo: d.querySelector(".codigo").value.trim().toUpperCase(),
-      quantidade: d.querySelector(".quantidade").value.trim(),
-      preco: d.querySelector(".preco").value.trim(),
-    })).filter(a => a.codigo || a.quantidade || a.preco);
+    return [...ativos.querySelectorAll(".ativo")].map(d => {
+      const escolhido = d.querySelector('.opcao[aria-pressed="true"]');
+      return {
+        codigo: d.querySelector(".codigo").value.trim().toUpperCase(),
+        quantidade: d.querySelector(".quantidade").value.trim(),
+        preco: d.querySelector(".preco").value.trim(),
+        motivo: escolhido ? escolhido.dataset.valor : "",
+        // "|" separa os campos da ficha: dentro do texto livre ele viraria campo novo.
+        motivoTexto: d.querySelector(".motivo-texto").value.trim().replace(/\|/g, "/"),
+      };
+    }).filter(a => a.codigo || a.quantidade || a.preco);
   }
 
   function texto() {
@@ -393,7 +434,11 @@
     if (!lista.length) {
       linhas.push("  (nenhuma ação preenchida ainda)");
     } else {
-      lista.forEach(a => linhas.push(`  - ${a.codigo || "?"} | ${a.quantidade || "?"} | ${a.preco || "?"}`));
+      lista.forEach(a => {
+        const motivo = [a.motivo, a.motivoTexto].filter(Boolean).join(": ");
+        linhas.push(`  - ${a.codigo || "?"} | ${a.quantidade || "?"} | ${a.preco || "?"}` +
+                    (motivo ? ` | motivo: ${motivo}` : ""));
+      });
     }
     linhas.push("avisos: " + (avisos.length ? avisos.join(", ") : "nenhum"));
     if (obs) linhas.push("obs: " + obs);
