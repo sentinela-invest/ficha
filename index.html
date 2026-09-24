@@ -332,6 +332,36 @@
   </section>
 
   <section>
+    <h2>Raio-X da carteira</h2>
+    <p class="dica" style="margin-top:-6px">
+      Os avisos acima chegam quando <b>acontece</b> alguma coisa. O Raio-X é o
+      contrário: chega de tempos em tempos, aconteça o que acontecer, e olha a
+      carteira inteira de uma vez.
+    </p>
+    <p class="dica">
+      Ele pega cada ação sua, compara com as concorrentes do mesmo setor e com o
+      resto da bolsa, lê os números do último balanço e os comunicados da empresa,
+      e escreve em português comum o que mudou desde que você comprou — e o que
+      continua igual. <b>Não é dica de compra ou venda</b>: é um retrato, pra
+      você decidir com mais informação.
+    </p>
+    <div class="escolhas">
+      <label class="escolha" for="rx-30">
+        <input type="radio" name="raiox" id="rx-30" class="raiox" data-valor="30" checked>
+        <span>Uma vez por mês<small>O ritmo normal. Chega no começo do mês.</small></span>
+      </label>
+      <label class="escolha" for="rx-15">
+        <input type="radio" name="raiox" id="rx-15" class="raiox" data-valor="15">
+        <span>A cada 15 dias<small>Pra quem quer acompanhar de perto.</small></span>
+      </label>
+      <label class="escolha" for="rx-nao">
+        <input type="radio" name="raiox" id="rx-nao" class="raiox" data-valor="nao">
+        <span>Não quero receber<small>Você continua recebendo os avisos acima normalmente.</small></span>
+      </label>
+    </div>
+  </section>
+
+  <section>
     <h2>O que vai ser enviado</h2>
     <div class="saida" id="saida" aria-live="polite"></div>
     <div class="acoes">
@@ -441,6 +471,9 @@
       });
     }
     linhas.push("avisos: " + (avisos.length ? avisos.join(", ") : "nenhum"));
+    const rx = document.querySelector(".raiox:checked");
+    const valor = rx ? rx.dataset.valor : "30";
+    linhas.push("raio-x: " + (valor === "nao" ? "não" : "a cada " + valor + " dias"));
     if (obs) linhas.push("obs: " + obs);
     return linhas.join("\n");
   }
@@ -453,6 +486,7 @@
         obs: document.getElementById("obs").value,
         ativos: lidos(),
         avisos: [...document.querySelectorAll(".aviso")].map(c => c.checked),
+        raiox: (document.querySelector(".raiox:checked") || {}).dataset?.valor || "30",
       }));
     } catch (e) { /* navegador anônimo: segue sem rascunho */ }
   }
@@ -467,6 +501,8 @@
         const c = document.querySelectorAll(".aviso")[i];
         if (c) c.checked = v;
       });
+      const rx = document.querySelector(`.raiox[data-valor="${dados.raiox || "30"}"]`);
+      if (rx) rx.checked = true;
     }
     const guardados = (dados && dados.ativos && dados.ativos.length) ? dados.ativos : [{}, {}];
     guardados.forEach(a => ativos.appendChild(linha(a)));
@@ -495,7 +531,7 @@
     }
   });
 
-  document.querySelectorAll(".aviso, #nome, #obs").forEach(c => c.addEventListener("input", atualizar));
+  document.querySelectorAll(".aviso, .raiox, #nome, #obs").forEach(c => c.addEventListener("input", atualizar));
   restaurar();
   atualizar();
 </script>
